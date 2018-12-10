@@ -30,7 +30,7 @@ object Day02Spec extends App {
     }
 
     def sumsTo(long: Long): Unit = {
-      val res = Day02.checksum(s.toList)
+      val res = Day02.checksum(s.toVector)
       if (res != long)
         println(s"Error: '$res' did not equal $long")
     }

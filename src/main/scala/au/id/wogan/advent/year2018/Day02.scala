@@ -1,19 +1,13 @@
 package au.id.wogan.advent.year2018
 
 import cats.data.Ior
-import cats.effect.ExitCode
 import cats.kernel.Monoid
-import monix.eval.{Task, TaskApp}
 
-import scala.io.Source
+object Day02 extends AdventApp(2) {
 
-object Day02 extends TaskApp {
-
-  override def run(args: List[String]): Task[ExitCode] = Task {
-    val lines = Source.fromResource("day02.txt").getLines().toList
-    println(s"Part One: ${checksum(lines)}")
-    println(s"Part Two: ${findPair(lines) map (common _).tupled getOrElse ""}")
-    ExitCode.Success
+  def go(): Unit = {
+    println(s"Part One: ${checksum(input)}")
+    println(s"Part Two: ${findPair(input.toList) map (common _).tupled getOrElse ""}")
   }
 
   val sum: Monoid[Long] = new Monoid[Long] {
@@ -23,7 +17,7 @@ object Day02 extends TaskApp {
   }
   val longIsLong: Long <:< Long = implicitly
 
-  def checksum(seq: List[String]): Long =
+  def checksum(seq: Vector[String]): Long =
     seq foldMap countFor map (_.merge(longIsLong, sum)) getOrElse 0L
 
   def countFor(string: String): Option[Ior[Long, Long]] = {

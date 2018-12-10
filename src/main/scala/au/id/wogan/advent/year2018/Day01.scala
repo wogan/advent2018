@@ -1,19 +1,12 @@
 package au.id.wogan.advent.year2018
 
-import cats.effect.ExitCode
-import monix.eval.{Task, TaskApp}
+object Day01 extends AdventApp(1) {
 
-import scala.io.Source
-
-object Day01 extends TaskApp {
-
-  override def run(args: List[String]): Task[ExitCode] = Task {
-    val lines = Source.fromResource("day01.txt").getLines()
-    val list = lines.map(_.toLong).toVector
+  def go(): Unit = {
+    val list = input.map(_.toLong)
     println(s"Part One: ${list.sum}")
     val firstRepeated = firstRepeatedFrequency(list)
     println(s"Part Two: $firstRepeated")
-    ExitCode.Success
   }
 
   type E[A] = Either[Long, A]

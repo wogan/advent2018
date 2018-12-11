@@ -1,13 +1,13 @@
 package au.id.wogan.advent.year2018
 
+import java.lang.Math.max
+
 import cats.kernel.Monoid
 
-import scala.language.implicitConversions
 import scala.util.matching.Regex
 
 object Day03 extends AdventApp(3) {
   type Cell = (Int, Int)
-  import Math.max
 
   case class Square(left: Int, top: Int, width: Int, height: Int) {
     val right: Int = left + width

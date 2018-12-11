@@ -37,7 +37,6 @@ object Day04 extends AdventApp(4) {
   implicit val orderLocalDateTime: Ordering[LocalDateTime] = _ compareTo _
 
   def parse(list: List[String]): List[Guard] = {
-    val x: Seq[Log] = list map parseLine sortBy (_._1)
     def start(head: Log, tail: Seq[Log]): List[Guard] = {
       implicit val m: Regex.Match = guard.findFirstMatchIn(head._2).get
       sleepsFor('id, Nil, tail)
@@ -59,7 +58,8 @@ object Day04 extends AdventApp(4) {
         case other =>
           throw new IllegalStateException(s"guard $gid never woke; instead $other")
       }
-    start(x.head, x.tail).groupBy(_.id).values.map(_.reduce((a, b) => Guard(a.id, a.sleeps ++ b.sleeps))).toList
+    val logs = list map parseLine sortBy (_._1)
+    start(logs.head, logs.tail).groupBy(_.id).values.map(_.reduce((a, b) => Guard(a.id, a.sleeps ++ b.sleeps))).toList
   }
 
   case class Sleep(start: Int, end: Int) {
@@ -68,21 +68,10 @@ object Day04 extends AdventApp(4) {
   }
 
   case class Guard(id: Int, sleeps: List[Sleep]) {
-    val total: Int =
-      sleeps.map(_.total).sum
-    val byMinute: Map[Int, Int] =
-      sleeps flatMap (_.minutes.toList) groupBy identity mapValues(_.size)
-    val mostCommonAsleep: Option[(Int, Int)] =
-      if (byMinute.nonEmpty)
-        byMinute.maxBy(_._2).some
-      else
-        None
+    val total: Int = sleeps.map(_.total).sum
+    val byMinute: Map[Int, Int] = sleeps flatMap (_.minutes.toList) groupBy identity mapValues(_.size)
+    val mostCommonAsleep: Option[(Int, Int)] = if (byMinute.nonEmpty) byMinute.maxBy(_._2).some else None
   }
-
-  /*
-  Find the guard that has the most minutes asleep. What minute does that guard spend asleep the most?
-  Of all guards, which guard is most frequently asleep on the same minute?
-   */
 
   override def go(): Unit = {
     val data = parse(input.toList)
@@ -93,24 +82,5 @@ object Day04 extends AdventApp(4) {
     val consistentMinute = consistent.mostCommonAsleep.map(_._1).get
     println(s"Part Two: Guard #${consistent.id} most commonly asleep on minute $consistentMinute: ${consistent.id * consistentMinute}")
   }
-//
-//  implicit class LocalDateTimeMethods(l: LocalDateTime) {
-//    def toNearestLocalDate: LocalDate =
-//      l.`with`(ClosestDay).toLocalDate
-//  }
-//
-//  /** Turns the provided datetime into midnight of the closest date */
-//  object ClosestDay extends TemporalAdjuster {
-//    private val MinutesInDay = 24 * 60
-//    // TODO: This doesn't account for seconds (or smaller units) as it's out of scope for the advent calendar day 4.
-//    override def adjustInto(temporal: Temporal): Temporal = {
-//      if (temporal.isSupported(ChronoField.MINUTE_OF_DAY)) {
-//        val minutes = temporal.get(ChronoField.MINUTE_OF_DAY)
-//        val target = MinutesInDay * Math.round(minutes.toFloat / MinutesInDay)
-//        temporal.plus(target - minutes, ChronoUnit.MINUTES)
-//      } else {
-//        temporal
-//      }
-//    }
-//  }
+
 }

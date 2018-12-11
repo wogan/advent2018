@@ -10,6 +10,6 @@ libraryDependencies ++= Seq(
   "io.monix" %% "monix" % "3.0.0-RC2"
 )
 
-scalacOptions += "-language:higherKinds"
+scalacOptions ++= Seq("-language:higherKinds", "-feature")
 
 addCompilerPlugin("com.github.cb372" %% "scala-typed-holes" % "0.0.3")

@@ -12,7 +12,7 @@ object Day01 extends AdventApp(1) {
   type E[A] = Either[Long, A]
 
   def firstRepeatedFrequency(input: Seq[Long]): Long =
-    Stream.from(0).productR(input.toStream).scanLeft(0L)(_ + _).foldM[E, Set[Long]](Set()) {
+    repeat(input).scanLeft(0L)(_ + _).foldM[E, Set[Long]](Set()) {
       case (seen, next) =>
         if (seen contains next) {
           Left(next)
@@ -20,4 +20,7 @@ object Day01 extends AdventApp(1) {
           Right(seen + next)
         }
     }.left.get
+
+  private def repeat[A](seq: Seq[A]): Stream[A] =
+    Stream from 0 productR seq.toStream
 }

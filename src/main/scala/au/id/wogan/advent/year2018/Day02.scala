@@ -27,18 +27,13 @@ object Day02 extends AdventApp(2) {
     Ior.fromOptions(two, three)
   }
 
-  type E[A] = Either[(String, String), A]
-
-  // TODO: make tailrec
-  def findPair(list: List[String]): Option[(String, String)] = {
-    list match {
+  def findPair(list: List[String]): Option[(String, String)] =
+    list.tails.toStream collectFirstSome {
       case head :: tail =>
-        val o = tail.find(compare(head, _))
-        o map (head -> _) orElse findPair(tail)
+        tail.find(compare(head, _)) map (head -> _)
       case _ =>
         None
     }
-  }
 
   def compare(first: String, second: String): Boolean =
     first.zip(second).map {

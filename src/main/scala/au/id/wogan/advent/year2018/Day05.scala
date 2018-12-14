@@ -25,11 +25,12 @@ object Day05 extends AdventApp(5) {
 
   @tailrec
   def react(c: Cursor): Cursor =
-    if (c.item.shouldReact) {
+    if (c.item.shouldReact)
       react(c.zap)
-    } else if (c.hasNext) {
+    else if (c.hasNext)
       react(c.next)
-    } else c
+    else
+      c
 
   case class Cursor(pos: Int, string: String) {
     require(pos < string.length - 1)

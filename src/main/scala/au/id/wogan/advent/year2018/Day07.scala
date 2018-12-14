@@ -43,10 +43,15 @@ object Day07 extends AdventApp(7) {
 
   }
 
-  def findOrderWithTime(time: Int, completed: Set[String], workers: List[Worker], remaining: Set[Step]): (Int, Set[String], List[Worker], Set[Step]) =
-  {
+  def findOrderWithTime(time: Int, completed: Set[String], workers: List[Worker], remaining: Set[Step]): (Int, Set[String], List[Worker], Set[Step]) = {
     val available = remaining.filter(_.isAvailable(completed))
-
+    val updatedWorkers = workers map {
+      case Some((_, t)) if t <= time =>
+        None
+      case other =>
+        other
+    }
+    ???
   }
 
   @tailrec

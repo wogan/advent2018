@@ -40,6 +40,9 @@ abstract class AdventApp(day: Int) extends TaskApp {
   implicit def parseHelperInt(symbol: Symbol)(implicit m: Match): Int =
     m.group(symbol.name).toInt
 
+  implicit def parseHelperOptionInt(symbol: Symbol)(implicit m: Match): Option[Int] =
+    Option(m.group(symbol.name)) map (_.toInt)
+
   implicit def parseHelperLong(symbol: Symbol)(implicit m: Match): Long =
     m.group(symbol.name).toLong
 

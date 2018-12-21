@@ -4,15 +4,15 @@ object Day08 extends AdventApp(8) {
 
   def getNodes(s: Int, data: List[Int]): (List[Node], List[Int]) = {
     val c :: m :: rest = data
-    val (node, remaining) = if (c == 0) {
+    val (node, remaining) = if (c == 0)
       Node(Nil, rest take m) -> rest.drop(m)
-    } else {
+    else {
       val (children, post) = getNodes(c - 1, rest)
       Node(children, post take m) -> post.drop(m)
     }
-    if (s == 0) {
+    if (s == 0)
       List(node) -> remaining
-    } else {
+    else {
       val (siblings, afterSiblings) = getNodes(s - 1, remaining)
       (node +: siblings) -> afterSiblings
     }

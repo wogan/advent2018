@@ -2,40 +2,40 @@ package au.id.wogan.advent.year2018
 
 object Day08 extends AdventApp(8) {
 
-  private val testInput = "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2".split(" ").map(_.toInt)
-
-
-  def parse(lines: List[Int]): (Node, List[Int]) =
-    lines match {
-      case 0 :: numM :: rest =>
-        Node(Nil, rest.take(numM)) -> rest.drop(numM)
-      case 1 :: numM :: rest =>
-        val (child, suffix) = parse(rest)
-        Node(List(child), suffix.take(numM)) -> suffix.drop(numM)
-      case 2 :: numM :: rest =>
-        val (child1, suffix) = parse(rest)
-        val (child2, suffix2) = parse(suffix)
-        Node(List(child1, child2), suffix2.take(numM)) -> suffix2.drop(numM)
-    }
-
-  def getNodes(int: Int, lines: List[Int]): (List[Node], List[Int]) = {
-    if (int == 0) {
-      Nil -> lines
+  def getNodes(s: Int, data: List[Int]): (List[Node], List[Int]) = {
+    val c :: m :: rest = data
+    val (node, remaining) = if (c == 0) {
+      Node(Nil, rest take m) -> rest.drop(m)
     } else {
-      ???
+      val (children, post) = getNodes(c - 1, rest)
+      Node(children, post take m) -> post.drop(m)
+    }
+    if (s == 0) {
+      List(node) -> remaining
+    } else {
+      val (siblings, afterSiblings) = getNodes(s - 1, remaining)
+      (node +: siblings) -> afterSiblings
     }
   }
 
-  case class Node(children: List[Node], metadata: List[Int])
+  case class Node(children: List[Node], metadata: List[Int]) {
+    def totalMeta: Int =
+      metadata.sum + children.map(_.totalMeta).sum
 
-  def sumMeta(node: Node): Int =
-    node.metadata.sum + node.children.map(sumMeta).sum
+    def value: Int =
+      if (children.isEmpty)
+        metadata.sum
+      else {
+        val selected = metadata filter (_ > 0) map (_ - 1) flatMap (children.get(_).toList)
+        selected.map(_.value).sum
+      }
+  }
 
   override def go(): Unit = {
-    // Building a tree depth first
-    val (tree, remainder) = parse(testInput.toList)
-    println(s"Hack part one: ${sumMeta(tree)}")
-
-
+    val data = input.head.split(" ").map(_.toInt).toList
+    val (List(tree), remainder) = getNodes(0, data)
+    assert(remainder.isEmpty)
+    println(s"Part One: ${tree.totalMeta}")
+    println(s"Part Two: ${tree.value}")
   }
 }
